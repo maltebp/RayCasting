@@ -1,15 +1,18 @@
-EXE = raycasting
+EXE = raycasting.exe
 WDIR = $(shell cd)
 ODIR = $(WDIR)/obj
 BDIR = $(WDIR)/bin
 SDIR = $(WDIR)/src
 
 $(info Working Directory = $(WDIR))
+$(info Object Directory = $(ODIR))
 
 SRC = $(wildcard $(SDIR)/*.cpp)
 
 #https://www.gnu.org/software/make/manual/html_node/Substitution-Refs.html
 OBJ = $(SRC:$(SDIR)/%.cpp=$(ODIR)/%.o)
+
+$(info Ojbects = $(OBJ))
 
 # Signals that all and clean targets are NOT creating any files
 .PHONY: all clean
