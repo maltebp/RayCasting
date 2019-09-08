@@ -4,4 +4,7 @@ os: windows
 
 compiler: g++
 
+before_install:
+  choco install make
+
 script: make
