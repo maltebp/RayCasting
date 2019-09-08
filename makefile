@@ -1,18 +1,18 @@
 EXE = raycasting.exe
-WDIR = $(shell pwd)
-ODIR = $(WDIR)/obj
-BDIR = $(WDIR)/bin
-SDIR = $(WDIR)/src
-
-$(info Working Directory = $(WDIR))
-$(info Object Directory = $(ODIR))
+WDIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))#$(shell cd)
+ODIR = $(WDIR)obj
+BDIR = $(WDIR)bin
+SDIR = $(WDIR)src
 
 SRC = $(wildcard $(SDIR)/*.cpp)
-
 #https://www.gnu.org/software/make/manual/html_node/Substitution-Refs.html
 OBJ = $(SRC:$(SDIR)/%.cpp=$(ODIR)/%.o)
 
-$(info Ojbects = $(OBJ))
+#For debugging
+$(info Working Directory = $(WDIR))
+$(info Object Directory = $(ODIR))
+$(info Source = $(OBJ))
+$(info Objects = $(OBJ))
 
 # Signals that all and clean targets are NOT creating any files
 .PHONY: all clean
@@ -27,7 +27,7 @@ $(BDIR)/$(EXE): $(OBJ)
 
 # $< is the first file in the dependency list (to the right of the :)
 $(ODIR)/%.o: $(SDIR)/%.cpp
-	g++  -c $< -o $@ -Iinclude
+	g++ -c $< -o $@ -Iinclude
 
 clean:
 	$(RM) $(OBJ)
