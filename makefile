@@ -4,6 +4,7 @@ ODIR = $(WDIR)/obj
 BDIR = $(WDIR)/bin
 SDIR = $(WDIR)/src
 
+$(info Working Directory = $(WDIR))
 
 SRC = $(wildcard $(SDIR)/*.cpp)
 
