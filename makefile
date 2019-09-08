@@ -3,6 +3,8 @@ WDIR = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))#$(shell cd)
 ODIR = $(WDIR)obj
 BDIR = $(WDIR)bin
 SDIR = $(WDIR)src
+LDLIB += -lglfw3 -lgdi32 -lglew32s -lopengl32
+
 
 SRC = $(wildcard $(SDIR)/*.cpp)
 #https://www.gnu.org/software/make/manual/html_node/Substitution-Refs.html
@@ -23,7 +25,7 @@ all: $(BDIR)/$(EXE)
 # EXE depends on all OBJ (all .o files)
 # $^ points to all dependencies ($OBJ)
 $(BDIR)/$(EXE): $(OBJ)
-	g++ $^ -o $@
+	g++ -Wall $^ -o $@ $(LDLIB)
 
 # $< is the first file in the dependency list (to the right of the :)
 $(ODIR)/%.o: $(SDIR)/%.cpp
