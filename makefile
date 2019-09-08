@@ -1,5 +1,5 @@
 EXE = raycasting.exe
-WDIR = $(shell cd)
+WDIR = $(shell pwd)
 ODIR = $(WDIR)/obj
 BDIR = $(WDIR)/bin
 SDIR = $(WDIR)/src
