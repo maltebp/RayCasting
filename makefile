@@ -25,7 +25,7 @@ all: $(BDIR)/$(EXE)
 # EXE depends on all OBJ (all .o files)
 # $^ points to all dependencies ($OBJ)
 $(BDIR)/$(EXE): $(OBJ)
-	g++ -Wall $^ -o $@ $(LDLIB)
+	g++ -Wall $^ -o $@ -Llib $(LDLIB)
 
 # $< is the first file in the dependency list (to the right of the :)
 $(ODIR)/%.o: $(SDIR)/%.cpp
