@@ -8,6 +8,7 @@
 
 using namespace std;
  
+
 static unsigned int compileShader(unsigned int type, const string &source){
     unsigned int id = glCreateShader(type);
     const char* cSource = source.c_str();
@@ -69,6 +70,8 @@ void glfwErrorCallback(int errCode, const char* errStr){
 
 
 
+
+
 int main(void)
 {
     cout<<"Starting..."<<endl<<endl;
@@ -111,20 +114,36 @@ int main(void)
     }
 
 
+    // float positions[] = {
+    //     0.5f, -0.5f,
+
+    //     0, -0.5f,
+
+    //     0.5f, 0.5f
+    // };
+
     float positions[] = {
         0.5f, -0.5f,
+        1.0, 0., 0., 1.,
+
         0, -0.5f,
-        0.5f, 0.5f
+        1.0, 0., 0., 1.,
+
+        0.5f, 0.5f,
+        1.0, 0., 0., 1.
     };
+
 
 
     unsigned int buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3*6 * sizeof(float), positions, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float))); //(sizeof(float)*2) );
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     unsigned int shader = createShader(vsSource, fsSource);
     glUseProgram(shader);
