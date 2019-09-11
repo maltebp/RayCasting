@@ -78,7 +78,7 @@ int main(void)
 
 
     string vsSource, fsSource;
-    getShaderSource("res/fragmentshader.shader", fsSource);
+    getShaderSource("res/circle_fragShader.glsl", fsSource);
     getShaderSource("res/vertexshader.shader", vsSource);
 
     cout<<"Vertex shader: "<<vsSource<<endl;
@@ -122,31 +122,69 @@ int main(void)
     //     0.5f, 0.5f
     // };
 
+
+    float centerX = 0;
+    float centerY = 0;
+    float radius = 100;
+
     float positions[] = {
-        0.5f, -0.5f,
+        centerX-radius, centerY-radius,
         1.0, 0., 0., 1.,
 
-        0, -0.5f,
+        centerX+radius, centerY-radius,
         1.0, 0., 0., 1.,
 
-        0.5f, 0.5f,
-        1.0, 0., 0., 1.
+        centerX+radius, centerY+radius,
+        1.0, 0., 0., 1.,
+
+        centerX-radius, centerY+radius,
+        1.0, 0., 0., 1.,
     };
 
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
 
 
     unsigned int buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 3*6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4*6* sizeof(float), positions, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float))); //(sizeof(float)*2) );
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float))); //(sizeof(float)*2) );
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    
+
+    unsigned ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    
 
     unsigned int shader = createShader(vsSource, fsSource);
     glUseProgram(shader);
+
+    unsigned int loc = glGetUniformLocation(shader, "center");
+    if( loc != -1){
+        glUniform2f(loc, 0, 0);
+    }else{
+        cout<<"Couldn't find uniform 'center' variable!"<<endl;
+    }
+    
+
+    loc = glGetUniformLocation(shader, "radius");
+    if( loc != -1){
+        glUniform1f(loc, radius);
+    }else{
+        cout<<"Couldn't find uniform 'radius' variable!"<<endl;
+    }
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -154,7 +192,10 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glLineWidth(10);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        //glDrawElements(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
