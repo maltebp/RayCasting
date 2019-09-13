@@ -1,5 +1,2 @@
 # RayCasting
-
-[![Build Status](https://travis-ci.org/maltebp/RayCasting.svg?branch=master)](https://travis-ci.org/maltebp/RayCasting)
-
-Fun with ray casting en OpenGL in C++...
+Me learning OpenGL in C++, and trying to have some fun with 2D raycasting

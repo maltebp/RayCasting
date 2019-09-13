@@ -9,6 +9,9 @@
 using namespace std;
  
 
+double mouseX=0;
+double mouseY=0;
+
 static unsigned int compileShader(unsigned int type, const string &source){
     unsigned int id = glCreateShader(type);
     const char* cSource = source.c_str();
@@ -69,7 +72,11 @@ void glfwErrorCallback(int errCode, const char* errStr){
 
 
 
-
+static void cursorPosCallback(GLFWwindow *window, double x, double y){
+    mouseX = x;
+    mouseY = y;
+    cout<<"X: "<<x<<"\tY:"<<y<<endl;
+}
 
 
 int main(void)
@@ -85,6 +92,8 @@ int main(void)
     cout<<"Fragment shader: "<<fsSource<<endl;
 
 
+    
+
     /* Initialize the library */
     if (!glfwInit()){
         cout<<"GLFW init  error"<<endl;
@@ -96,6 +105,7 @@ int main(void)
     glfwSetErrorCallback(glfwErrorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
+    glfwWindowHint(GLFW_SAMPLES, 16);
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window)
     {
@@ -104,7 +114,6 @@ int main(void)
         return -1;
     }
 
-
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
@@ -112,6 +121,8 @@ int main(void)
     if(glewInit() != GLEW_OK){
         std::cout<<"Glew not ok"<<std::endl;
     }
+
+    glfwSetCursorPosCallback(window, cursorPosCallback);
 
 
     // float positions[] = {
@@ -122,67 +133,15 @@ int main(void)
     //     0.5f, 0.5f
     // };
 
-
-    float centerX = 0;
-    float centerY = 0;
-    float radius = 100;
-
-    float positions[] = {
-        centerX-radius, centerY-radius,
-        1.0, 0., 0., 1.,
-
-        centerX+radius, centerY-radius,
-        1.0, 0., 0., 1.,
-
-        centerX+radius, centerY+radius,
-        1.0, 0., 0., 1.,
-
-        centerX-radius, centerY+radius,
-        1.0, 0., 0., 1.,
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-
-    unsigned int buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*6* sizeof(float), positions, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float))); //(sizeof(float)*2) );
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    
-
-    unsigned ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_STATIC_DRAW);
-    
-
     unsigned int shader = createShader(vsSource, fsSource);
     glUseProgram(shader);
 
-    unsigned int loc = glGetUniformLocation(shader, "center");
-    if( loc != -1){
-        glUniform2f(loc, 0, 0);
-    }else{
-        cout<<"Couldn't find uniform 'center' variable!"<<endl;
-    }
-    
 
-    loc = glGetUniformLocation(shader, "radius");
-    if( loc != -1){
-        glUniform1f(loc, radius);
-    }else{
-        cout<<"Couldn't find uniform 'radius' variable!"<<endl;
-    }
+    //glEnable(GL_POLYGON_SMOOTH);
+    //glEnable(GL_BLEND);
+    
+    //glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -193,6 +152,67 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glLineWidth(10);
+
+        glEnable(GL_MULTISAMPLE);
+
+
+        float centerX = mouseX;
+        float centerY = mouseY;
+        float radius = 200;
+
+        float positions[] = {
+            centerX-radius, centerY-radius,
+            1.0, 0., 0., 1.,
+
+            centerX+radius, centerY-radius,
+            1.0, 0., 0., 1.,
+
+            centerX+radius, centerY+radius,
+            1.0, 0., 0., 1.,
+
+            centerX-radius, centerY+radius,
+            1.0, 0., 0., 1.,
+        };
+
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+
+        unsigned int buffer;
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, 4*6* sizeof(float), positions, GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float))); //(sizeof(float)*2) );
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+        
+
+        unsigned ibo;
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+        
+
+        unsigned int loc = glGetUniformLocation(shader, "center");
+        if( loc != -1){
+            glUniform2f(loc, centerX, centerY);
+        }else{
+            cout<<"Couldn't find uniform 'center' variable!"<<endl;
+        }
+        
+
+        loc = glGetUniformLocation(shader, "radius");
+        if( loc != -1){
+            glUniform1f(loc, radius);
+        }else{
+            cout<<"Couldn't find uniform 'radius' variable!"<<endl;
+        }
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         //glDrawElements(GL_TRIANGLES, 0, 3);
