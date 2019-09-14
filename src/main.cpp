@@ -75,7 +75,6 @@ void glfwErrorCallback(int errCode, const char* errStr){
 static void cursorPosCallback(GLFWwindow *window, double x, double y){
     mouseX = x;
     mouseY = y;
-    cout<<"X: "<<x<<"\tY:"<<y<<endl;
 }
 
 
@@ -90,9 +89,6 @@ int main(void)
 
     cout<<"Vertex shader: "<<vsSource<<endl;
     cout<<"Fragment shader: "<<fsSource<<endl;
-
-
-    
 
     /* Initialize the library */
     if (!glfwInit()){
