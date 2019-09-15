@@ -25,7 +25,6 @@ double FPSCounter::tick(){
         displayCooldown += DISPLAY_FREQ;
     }
 
-    //printf("Time: %.3f\t LastTime: %.3f\t dTime: %.2f\t CD: %.2f\tFPS: %.2f\n", time, lastTickTime, dTime, displayCooldown, 1/dTime);
     lastTickTime = time;
     return dTime;
 }

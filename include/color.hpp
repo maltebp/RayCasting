@@ -10,8 +10,9 @@ struct Color{
 
     Color(float red, float green, float blue, float alpha);
     Color(float red, float green, float blue);
+    Color();
     
-};
+} typedef Color;
 
 
 //https://stackoverflow.com/questions/47083328/operator-overloading-in-header-files-and-in-the-cpp-files

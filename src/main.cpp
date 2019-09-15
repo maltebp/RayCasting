@@ -6,64 +6,67 @@
 #include <vector>
 #include <fstream>
 #include "fpscounter.hpp"
+#include "circle.hpp"
 
 using namespace std;
 
-double mouseX=0;
-double mouseY=0;
 
-static unsigned int compileShader(unsigned int type, const string &source){
-    unsigned int id = glCreateShader(type);
-    const char* cSource = source.c_str();
-    glShaderSource(id, 1, &cSource, nullptr ); 
-    glCompileShader(id);
-    int status;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &status);
-    if( status == GL_TRUE ){
-        cout<<"Shader compile successful!"<<endl;
-    }else{
-        int logLength = 0;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
-        char* message = (char*) malloc(sizeof(char)*logLength);
-        glGetShaderInfoLog(id, logLength, NULL, message); 
-
-        cout<<"Compile error with "<<((type == GL_VERTEX_SHADER) ? "vertex" : "fragment") << " shader:"<<endl;
-        cout<<message<<endl;
-        free(message);
-        return 0;
-    } 
-    return id;
-}
+Vec2 mousePos;
+Circle *circle = nullptr;
 
 
-static int createShader( const string &vsSource, const string &fsSource ){
-    unsigned int program = glCreateProgram();
+// static unsigned int compileShader(unsigned int type, const string &source){
+//     unsigned int id = glCreateShader(type);
+//     const char* cSource = source.c_str();
+//     glShaderSource(id, 1, &cSource, nullptr ); 
+//     glCompileShader(id);
+//     int status;
+//     glGetShaderiv(id, GL_COMPILE_STATUS, &status);
+//     if( status == GL_TRUE ){
+//         cout<<"Shader compile successful!"<<endl;
+//     }else{
+//         int logLength = 0;
+//         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
+//         char* message = (char*) malloc(sizeof(char)*logLength);
+//         glGetShaderInfoLog(id, logLength, NULL, message); 
+
+//         cout<<"Compile error with "<<((type == GL_VERTEX_SHADER) ? "vertex" : "fragment") << " shader:"<<endl;
+//         cout<<message<<endl;
+//         free(message);
+//         return 0;
+//     } 
+//     return id;
+// }
+
+
+// static int createShader( const string &vsSource, const string &fsSource ){
+//     unsigned int program = glCreateProgram();
     
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vsSource);
-    glAttachShader(program, vertexShader);
-    
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fsSource );
-    glAttachShader(program, fragmentShader);
+//     unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vsSource);
+//     glAttachShader(program, vertexShader);
 
-    if(fragmentShader == 0 || vertexShader == 0){
-        glDeleteProgram(program);
-    }else{
-        glLinkProgram(program);
-        glValidateProgram(program);
-        return program;
-    }
-    return 0;    
-}  
+//     unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fsSource );
+//     glAttachShader(program, fragmentShader);
+
+//     if(fragmentShader == 0 || vertexShader == 0){
+//         glDeleteProgram(program);
+//     }else{
+//         glLinkProgram(program);
+//         glValidateProgram(program);
+//         return program;
+//     }
+//     return 0;    
+// }  
 
 
-void getShaderSource( string filename, string &source ){
-    ifstream inFile(filename);
-    string input(
-        (istreambuf_iterator<char>(inFile)),
-        istreambuf_iterator<char>()    
-    );
-    source += input;
-}
+// void getShaderSource( string filename, string &source ){
+//     ifstream inFile(filename);
+//     string input(
+//         (istreambuf_iterator<char>(inFile)),
+//         istreambuf_iterator<char>()    
+//     );
+//     source += input;
+// }
 
 
 void glfwErrorCallback(int errCode, const char* errStr){
@@ -73,22 +76,25 @@ void glfwErrorCallback(int errCode, const char* errStr){
 
 
 static void cursorPosCallback(GLFWwindow *window, double x, double y){
-    mouseX = x;
-    mouseY = y;
+    mousePos.x = (float) x;
+    mousePos.y = (float) y;
+    cout<<fixed<<"Mouse Pos: "<<mousePos<<endl;
+    circle->moveTo( mousePos );
 }
 
 
 int main(void)
 {
-    cout<<"Starting..."<<endl<<endl;
+    
 
+    cout<<"Starting..."<<endl;
 
-    string vsSource, fsSource;
-    getShaderSource("res/circle_fragShader.glsl", fsSource);
-    getShaderSource("res/vertexshader.shader", vsSource);
+    // string vsSource, fsSource;
+    // getShaderSource("res/circle_fragShader.glsl", fsSource);
+    // getShaderSource("res/vertexshader.shader", vsSource);
 
-    cout<<"Vertex shader: "<<vsSource<<endl;
-    cout<<"Fragment shader: "<<fsSource<<endl;
+    // cout<<"Vertex shader: "<<vsSource<<endl;
+    // cout<<"Fragment shader: "<<fsSource<<endl;
 
     /* Initialize the library */
     if (!glfwInit()){
@@ -120,17 +126,26 @@ int main(void)
 
     glfwSetCursorPosCallback(window, cursorPosCallback);
 
+    cout<<"Starting..."<<endl<<endl;
 
-    // float positions[] = {
-    //     0.5f, -0.5f,
+    // TEST REMOVE THIS
+    Vec2 pos(30.,30.);
+    Color col(0.75,0.75,0.75);
+    Circle circleObj( pos, 10, col );
+    circle = &circleObj;
+    cout<<"Created circle:"<<endl<<circle<<endl;
+    // ==================
 
-    //     0, -0.5f,
+    // // float positions[] = {
+    // //     0.5f, -0.5f,
 
-    //     0.5f, 0.5f
-    // };
+    // //     0, -0.5f,
 
-    unsigned int shader = createShader(vsSource, fsSource);
-    glUseProgram(shader);
+    // //     0.5f, 0.5f
+    // // };
+
+    // unsigned int shader = createShader(vsSource, fsSource);
+    // glUseProgram(shader);
 
 
     //glEnable(GL_POLYGON_SMOOTH);
@@ -149,70 +164,71 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glLineWidth(10);
-
         glEnable(GL_MULTISAMPLE);
 
-        float centerX = mouseX;
-        float centerY = mouseY;
-        float radius = 200;
+        // float centerX = mouseX;
+        // float centerY = mouseY;
+        // float radius = 200;
 
-        float positions[] = {
-            centerX-radius, centerY-radius,
-            1.0, 0., 0., 1.,
+        // float positions[] = {
+        //     centerX-radius, centerY+radius,
+        //     1.0, 0., 0., 1.,
 
-            centerX+radius, centerY-radius,
-            1.0, 0., 0., 1.,
+        //     centerX+radius, centerY+radius,
+        //     1.0, 0., 0., 1.,
 
-            centerX+radius, centerY+radius,
-            1.0, 0., 0., 1.,
+        //     centerX+radius, centerY-radius,
+        //     1.0, 0., 0., 1.,
 
-            centerX-radius, centerY+radius,
-            1.0, 0., 0., 1.,
-        };
+        //     centerX-radius, centerY-radius,
+        //     1.0, 0., 0., 1.,
+        // };
 
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        // unsigned int indices[] = {
+        //     0, 1, 2,
+        //     2, 3, 0
+        // };
 
 
-        unsigned int buffer;
-        glGenBuffers(1, &buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferData(GL_ARRAY_BUFFER, 4*6* sizeof(float), positions, GL_DYNAMIC_DRAW);
+        // unsigned int buffer;
+        // glGenBuffers(1, &buffer);
+        // glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        // glBufferData(GL_ARRAY_BUFFER, 4*6* sizeof(float), positions, GL_DYNAMIC_DRAW);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float))); //(sizeof(float)*2) );
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+        // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
+        // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
+        // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float))); //(sizeof(float)*2) );
+        // glEnableVertexAttribArray(0);
+        // glEnableVertexAttribArray(1);
+        // glEnableVertexAttribArray(2);
         
 
-        unsigned ibo;
-        glGenBuffers(1, &ibo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+        // unsigned ibo;
+        // glGenBuffers(1, &ibo);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
         
 
-        unsigned int loc = glGetUniformLocation(shader, "center");
-        if( loc != -1){
-            glUniform2f(loc, centerX, centerY);
-        }else{
-            cout<<"Couldn't find uniform 'center' variable!"<<endl;
-        }
+        // unsigned int loc = glGetUniformLocation(shader, "center");
+        // if( loc != -1){
+        //     glUniform2f(loc, centerX, centerY);
+        // }else{
+        //     cout<<"Couldn't find uniform 'center' variable!"<<endl;
+        // }
         
 
-        loc = glGetUniformLocation(shader, "radius");
-        if( loc != -1){
-            glUniform1f(loc, radius);
-        }else{
-            cout<<"Couldn't find uniform 'radius' variable!"<<endl;
-        }
+        // loc = glGetUniformLocation(shader, "radius");
+        // if( loc != -1){
+        //     glUniform1f(loc, radius);
+        // }else{
+        //     cout<<"Couldn't find uniform 'radius' variable!"<<endl;
+        // }
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         //glDrawElements(GL_TRIANGLES, 0, 3);
+
+        circle->draw();
+        //cout<<*circle<<endl;
 
         fpsCounter.tick();
 
