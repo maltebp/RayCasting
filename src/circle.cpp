@@ -118,6 +118,10 @@ void Circle::draw(){
     }
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+    // Doing this removes massive lag
+    glDeleteBuffers(1, &buffer);
+    glDeleteBuffers(1, &ibo);
 }
 
 

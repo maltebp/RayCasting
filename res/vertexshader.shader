@@ -9,7 +9,7 @@ out vec2 TexCoord;
 
 
 void main(){
-    gl_Position = ((position-vec4(320,240,0,0))*vec4(1,-1,1,1))  / vec4(320,240,1,1);
+    gl_Position = ((position-vec4(680,480,0,0))*vec4(1,-1,1,1))  / vec4(680,480,1,1);
     fColor = vColor;
     TexCoord = aTexCoord; 
 }
