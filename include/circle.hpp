@@ -23,7 +23,7 @@ class Circle{
 
 public:
     void draw();
-    void moveWith(Vec2 pos);
+    void moveWith( const Vec2 &pos);
     void moveTo( const Vec2 &pos);
     Vec2 getPos();
     unsigned int getId();

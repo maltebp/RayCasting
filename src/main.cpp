@@ -14,8 +14,8 @@
 using namespace std;
 
 
-Vec2 mousePos(0,0);
-Vec2 screen(1360,460);
+
+Vec2 screen(1360,960);
 //Circle *circle = nullptr;
 //vector<Line> lines;
 //vector<Circle> circles;
@@ -25,12 +25,19 @@ void glfwErrorCallback(int errCode, const char* errStr){
 }
 
 
+static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, int mod  ){
+    if( action == GLFW_PRESS){
+        keyPressed(key);
+    }
+    if( action == GLFW_RELEASE){
+        keyReleased(key);
+    }
+}
+
+
 
 static void cursorPosCallback(GLFWwindow *window, double x, double y){
-    mousePos.x = (float) x;
-    mousePos.y = (float) y;
-    //cout<<fixed<<"Mouse Pos: "<<mousePos<<endl;
-    //circle->moveTo( mousePos );
+    updateMouse( Vec2(x,y) );
 }
 
 
@@ -69,6 +76,7 @@ int main(void)
     }
 
     glfwSetCursorPosCallback(window, cursorPosCallback);
+    glfwSetKeyCallback(window, keyCallBack);
 
     //srand(time(NULL));
 
@@ -94,7 +102,7 @@ int main(void)
 
     FPSCounter fpsCounter;
 
-    initializeRayCasting();
+    initializeRayCasting(screen);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -104,7 +112,7 @@ int main(void)
 
         glEnable(GL_MULTISAMPLE);
 
-        updateRayCasting(&screen, &mousePos);
+        updateRayCasting();
         fpsCounter.tick();
 
         /* Swap front and back buffers */

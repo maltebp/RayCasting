@@ -71,6 +71,12 @@ void Circle::moveTo(const Vec2 &newPos){
     updateVerticesPos();
 }
 
+void Circle::moveWith(const Vec2 &movement){
+    pos.x += movement.x;
+    pos.y += movement.y;
+    updateVerticesPos();
+}
+
 
 void Circle::draw(){
 
