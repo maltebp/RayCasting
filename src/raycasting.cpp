@@ -14,7 +14,7 @@ using namespace std;
 
 
 #define NUM_WALLS 10
-#define NUM_RAYS 150
+#define NUM_RAYS 500
 
 #define PI 3.1415926535897
 
@@ -47,7 +47,7 @@ void initializeRayCasting(){
 
     // Initialize Rays
     for(int i=0; i<NUM_RAYS;i++){
-        rays.push_back( Line( Vec2(0,0), Vec2(0,0), 1, Color(0.3,0.3,0.3) )  );
+        rays.push_back( Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
     }
    
 }
