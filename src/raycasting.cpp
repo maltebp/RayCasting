@@ -24,6 +24,4 @@ void updateRayCasting(Vec2 *screenDimensions, Vec2 *mouseCoords){
     cursorCircle.moveTo(*mouseCoords);
     cursorCircle.draw();
 
-
-    
 }
