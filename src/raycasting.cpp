@@ -21,7 +21,7 @@ using namespace std;
 
 #define PI 3.1415926535897
 
-const float FOV = 60  *  PI/180;
+const float FOV =   60*  PI/180;
 
 /* Can't initialize a circle object here, since it
  uses gl objects before it has been initialized */
@@ -29,6 +29,8 @@ Circle *cursorCircle = nullptr;
 vector<Line> walls; 
 vector<Line> rays;
 vector<Line> boundaries;
+
+float viewDirection;
 
 Vec2 mousePos;
 Vec2 screen2D;
@@ -67,7 +69,7 @@ void initializeRayCasting(Vec2 &screenDimensions){
     boundaries.push_back( Line( Vec2(0,screen2D.y), Vec2(0,0) ) );
 
     // Initialize Rays
-    for(int i=0; i<NUM_RAYS;i++){
+    for(int i=0; i<screen3D.x;i++){
         rays.push_back( Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
     }
 }
@@ -172,8 +174,13 @@ void keyReleased(int keyCode){
 }
 
 void updateMouse(const Vec2 &mouseCoords){
-    mousePos.x = mouseCoords.x > screen2D.x ? screen2D.x : mouseCoords.x;
-    mousePos.y = mouseCoords.y > screen2D.y ? screen2D.y : mouseCoords.y;
+    viewDirection += mouseCoords.x*0.01;
+    while(viewDirection > 2*PI){
+        viewDirection -= 2*PI;
+    }
+    while(viewDirection < 0){
+        viewDirection += 2*PI;
+    }
 }
 
 
@@ -181,77 +188,51 @@ void updateMouse(const Vec2 &mouseCoords){
 void updateRayCasting(){
 
     Vec2 pos = cursorCircle->getPos();
-    float direction = atan2( mousePos.y- pos.y, mousePos.x - pos.x);
 
     float vel = 0;
     if( moveKeysPressed[FORWARD] ) vel += 4;
     if( moveKeysPressed[BACKWARD]) vel -= 4;
 
     Vec2 movement(
-        cos(direction) * vel,
-        sin(direction) * vel
+        cos(viewDirection) * vel,
+        sin(viewDirection) * vel
     );
 
     // Update/Draw cursor
     cursorCircle->moveWith(movement);
     cursorCircle->draw();
 
-
-    // // Updating and Drawing rays
-    // float startAngle = direction-FOV/2;
-    // float angleStep = FOV/NUM_RAYS;
-    // float rayWidth = screen3D.x / NUM_RAYS;
-
-    // for( int i=0; i<NUM_RAYS; i++ ){
-    //     rays[i].movePointTo(0, cursorCircle->getPos());
-    //     rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), startAngle + i*angleStep )  );
-    //     rays[i].draw();
-
-    //     float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1));
-    //     float x3D = screen2D.x + rayWidth * i;
-    //     float yAdjust = screen3D.y * 0.1 + distance*0.5;
-    //     if( yAdjust > screen3D.y/2) yAdjust = screen3D.y/2; 
-    //     float color = 1/(distance*0.01);
-
-    //     Line projection( 
-    //         Vec2( x3D, yAdjust ),
-    //         Vec2( x3D, screen2D.y - yAdjust),
-    //         rayWidth,
-    //         Color(color,color,color)
-    //         );
-
-    //     projection.draw();
-    // }
-
     
     // Updating and Drawing rays
-    float startAngle = direction-FOV/2;
-    float angleStep = FOV/NUM_RAYS;
-    float rayWidth = screen3D.x / NUM_RAYS;
+    float startAngle = viewDirection-FOV/2;
+    float angleInc = FOV/screen3D.x;
+    float projDist = (screen3D.x/2) / tan(FOV/2);
 
-    for( int i=0; i<NUM_RAYS; i++ ){
-        float angle = atan( (i-screen3D.x/2) / 50);
+    for( int i=0; i<screen3D.x; i++ ){
 
+        float angle = startAngle + angleInc*i;
 
         rays[i].movePointTo(0, cursorCircle->getPos());
-        rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), startAngle + angle )  );
+        rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), angle )  );
         rays[i].draw();
 
-        float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1));
-        float x3D = screen2D.x + rayWidth * i;
-        float yAdjust = screen3D.y * 0.1 + distance*0.5;
-        if( yAdjust > screen3D.y/2) yAdjust = screen3D.y/2; 
+        float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1)) * cos( viewDirection - angle );
+
+        float x3D = screen2D.x + i;
+        float height = (screen2D.y*0.1)/distance * projDist;
+        float yAdjust = (screen2D.y-height)/2;
         float color = 1/(distance*0.01);
 
         Line projection( 
             Vec2( x3D, yAdjust ),
             Vec2( x3D, screen2D.y - yAdjust),
-            rayWidth,
+            1,
             Color(color,color,color)
             );
 
         projection.draw();
     }
+
 
 
 

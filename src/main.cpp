@@ -15,6 +15,7 @@ using namespace std;
 
 
 
+
 Vec2 screen(1360,960);
 //Circle *circle = nullptr;
 //vector<Line> lines;
@@ -37,7 +38,10 @@ static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, i
 
 
 static void cursorPosCallback(GLFWwindow *window, double x, double y){
-    updateMouse( Vec2(x,y) );
+    double dx = x-screen.x/2; 
+    double dy = y-screen.y/2;
+    glfwSetCursorPos(window, screen.x/2, screen.y/2);
+    updateMouse( Vec2(dx,dy) );
 }
 
 
