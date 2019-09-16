@@ -2,9 +2,6 @@
 
 #include <string>
 
-
-
-
 unsigned int compileShader(unsigned int type, const std::string &source);
 
 unsigned int createProgram(const std::string &vsSource, const std::string &fsSource);

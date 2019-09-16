@@ -6,13 +6,8 @@
 #include "shaderloader.hpp"
 
 
-//========
-// CREATING SHADER
 unsigned int Circle::program = 0;
 bool Circle::initialized = false;
-
-
-//=======
 unsigned int Circle::nextId = 0;
 
 unsigned int Circle::getId(){ return id; }
@@ -27,7 +22,7 @@ Circle::Circle(Vec2 cPos, float cRadius, Color cColor){
     id = nextId++;
     updateVerticesPos();
     updateVerticesCol();
-
+    
     
     indices[0] = 0;
     indices[1] = 1;
@@ -82,14 +77,11 @@ void Circle::draw(){
     int currentProgram;
     glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
     if(currentProgram != program){
-        std::cout<<"Not current program!"<<std::endl;
         glUseProgram(program);
     }
 
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ARRAY_BUFFER, 4*6*sizeof(float), vertices, GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
@@ -100,7 +92,9 @@ void Circle::draw(){
     glEnableVertexAttribArray(2);
     
     glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+
 
     unsigned int loc = glGetUniformLocation(program, "center");
     if( loc != -1){
@@ -109,7 +103,7 @@ void Circle::draw(){
         std::cout<<"Couldn't find uniform 'center' variable!"<<std::endl;
     }
     
-
+    
     loc = glGetUniformLocation(program, "radius");
     if( loc != -1){
         glUniform1f(loc, radius);
