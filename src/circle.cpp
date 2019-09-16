@@ -6,8 +6,8 @@
 #include "shaderloader.hpp"
 
 
-unsigned int Circle::program = 0;
 bool Circle::initialized = false;
+unsigned int Circle::program = 0;
 unsigned int Circle::nextId = 0;
 
 unsigned int Circle::getId(){ return id; }

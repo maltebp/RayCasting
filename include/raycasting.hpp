@@ -2,4 +2,5 @@
 
 #include "vec2.hpp"
 
-void updateRayCasting(Vec2 screenDimensions, Vec2 mouseCoords);
+void initializeRayCasting();
+void updateRayCasting(Vec2 *screenDimensions, Vec2 *mouseCoords);

@@ -46,6 +46,18 @@ Line::Line(Vec2 p1, Vec2 p2, float w, Color col){
     }
 }
 
+Line::Line(Vec2 p1, Vec2 p2){
+    id = 0;
+    point1 = p1;
+    point2 = p2;
+    width = 0;
+    color = Color(1,1,1);
+
+    if( !initialized ){
+        initialized = true;
+        program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
+    }
+}
 
 
 void Line::draw(){
@@ -86,6 +98,14 @@ float Line::getWidth(){ return width; }
 Color Line::getColor(){ return color; }
 Vec2 Line::getPos(unsigned int index){ return index ? point2 : point1; }
 unsigned int Line::getId(){return id;}
+
+void Line::movePointTo(unsigned int pointIndex, const Vec2 &pos){
+    if(pointIndex == 0){
+        point1 = pos;
+    }else{
+        point2 = pos;
+    }
+}
 
 std::ostream& operator << (std::ostream& stream, Line obj){
     return stream<<"Line{ "<<

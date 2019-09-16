@@ -19,12 +19,13 @@ class Line{
 
 public:
     Line(Vec2, Vec2, float, Color); 
+    Line(Vec2, Vec2);
     void draw();
     Vec2 getPos(unsigned int pointIndex);
     unsigned int getId();
     float getWidth();
     Color getColor();
-    void moveTo(unsigned int pointIndex, Vec2 newPos);
+    void movePointTo(unsigned int pointIndex, const Vec2 &newPos);
 }; 
 
 std::ostream& operator << ( std::ostream&, Line obj);
