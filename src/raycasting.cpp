@@ -197,20 +197,50 @@ void updateRayCasting(){
     cursorCircle->draw();
 
 
+    // // Updating and Drawing rays
+    // float startAngle = direction-FOV/2;
+    // float angleStep = FOV/NUM_RAYS;
+    // float rayWidth = screen3D.x / NUM_RAYS;
+
+    // for( int i=0; i<NUM_RAYS; i++ ){
+    //     rays[i].movePointTo(0, cursorCircle->getPos());
+    //     rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), startAngle + i*angleStep )  );
+    //     rays[i].draw();
+
+    //     float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1));
+    //     float x3D = screen2D.x + rayWidth * i;
+    //     float yAdjust = screen3D.y * 0.1 + distance*0.5;
+    //     if( yAdjust > screen3D.y/2) yAdjust = screen3D.y/2; 
+    //     float color = 1/(distance*0.01);
+
+    //     Line projection( 
+    //         Vec2( x3D, yAdjust ),
+    //         Vec2( x3D, screen2D.y - yAdjust),
+    //         rayWidth,
+    //         Color(color,color,color)
+    //         );
+
+    //     projection.draw();
+    // }
+
+    
     // Updating and Drawing rays
     float startAngle = direction-FOV/2;
     float angleStep = FOV/NUM_RAYS;
     float rayWidth = screen3D.x / NUM_RAYS;
 
     for( int i=0; i<NUM_RAYS; i++ ){
+        float angle = atan( (i-screen3D.x/2) / 50);
+
+
         rays[i].movePointTo(0, cursorCircle->getPos());
-        rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), startAngle + i*angleStep )  );
+        rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), startAngle + angle )  );
         rays[i].draw();
 
         float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1));
         float x3D = screen2D.x + rayWidth * i;
         float yAdjust = screen3D.y * 0.1 + distance*0.5;
-        if( yAdjust > screen3D.y/2) yAdjust = screen3D.y/2;
+        if( yAdjust > screen3D.y/2) yAdjust = screen3D.y/2; 
         float color = 1/(distance*0.01);
 
         Line projection( 
@@ -222,6 +252,8 @@ void updateRayCasting(){
 
         projection.draw();
     }
+
+
 
     // Draw Walls
     for( int i=0; i<NUM_WALLS; i++){
