@@ -8,7 +8,7 @@
 
 
 void FPSCounter::printFPS(double fps){
-    std::cout<<"FPS: "<<std::setprecision(2)<<fps<<std::endl;
+    std::cout<<std::fixed<<"FPS: "<<std::setprecision(2)<<fps<<std::endl;
 }
 
 FPSCounter::FPSCounter(){

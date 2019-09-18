@@ -82,7 +82,7 @@ int main(void)
     glfwSetCursorPosCallback(window, cursorPosCallback);
     glfwSetKeyCallback(window, keyCallBack);
 
-    //srand(time(NULL));
+    srand(time(NULL));
 
     // Line line( Vec2(100.,100.), Vec2(400.,100.), 5., Color(1.,1.,1.) );
     // cout<<"Created line: "<<endl<<line<<endl;

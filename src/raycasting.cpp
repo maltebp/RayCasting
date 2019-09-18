@@ -200,6 +200,25 @@ void updateRayCasting(){
 
     // Update/Draw cursor
     cursorCircle->moveWith(movement);
+
+    Vec2 newPos = cursorCircle->getPos();
+
+    if( newPos.x < 0 ){
+        newPos.x = 0;
+    }
+    else if( newPos.x > screen2D.x){
+        newPos.x = screen2D.x;
+    }
+
+    if( newPos.y < 0 ){
+        newPos.y = 0;
+    }else if(newPos.y > screen2D.y ){
+        newPos.y = screen2D.y;
+    }
+
+    cursorCircle->moveTo(newPos);
+
+
     cursorCircle->draw();
 
     
