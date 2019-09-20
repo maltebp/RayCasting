@@ -4,28 +4,6 @@
 #include <GL/glew.h>
 #include "shaderloader.hpp"
 
-// class Line{
-
-//     static bool initialized;
-//     static unsigned int program;
-//     static unsigned int nextId;
-
-//     unsigned int id;
-//     Vec2 point1;
-//     Vec2 point2;
-//     Color color;
-//     float width;
-
-
-// public:
-//     Line(Vec2 p1, Vec2 p2, float w, Color col); 
-//     void draw();
-//     Vec2 getPos(unsigned int pointIndex);
-//     void moveTo(unsigned int pointIndex, Vec2 newPos);
-// }; 
-
-
-
 //unsigned int Line::program = 0;
 unsigned int Line::nextId = 0;
 bool Line::initialized = false;

@@ -9,17 +9,10 @@
 #include <time.h>
 #include "vec2.hpp"
 #include "raycasting.hpp"
-//#include "raycasting.hpp"
 
 using namespace std;
 
-
-
-
 Vec2 screen(1360,960);
-//Circle *circle = nullptr;
-//vector<Line> lines;
-//vector<Circle> circles;
 
 void glfwErrorCallback(int errCode, const char* errStr){
     cout<<"GLFW Error: "<<"("<<errCode<<") "<<errStr<<endl;
@@ -83,27 +76,7 @@ int main(void)
     glfwSetKeyCallback(window, keyCallBack);
 
     srand(time(NULL));
-
-    // Line line( Vec2(100.,100.), Vec2(400.,100.), 5., Color(1.,1.,1.) );
-    // cout<<"Created line: "<<endl<<line<<endl;
-
-    // /*
-    // for(int i=0; i<100; i++){
-    //     Circle c( Vec2(rand()%1360, rand()%960), 12, Color(1,1,1));
-    //     circles.push_back(c);
-    // }*/
-
-    // for(int i=0; i<20;i++){
-    //     Vec2 startPos = Vec2(rand()%960,rand()%560);
-    //     Vec2 endPos = Vec2( startPos.x + rand()%400+50, startPos.y + rand()%400+50 );
-
-    //     lines.push_back( Line( startPos, endPos, 5, Color(1,1,1) )  );
-    // }
-
-    // Circle circleObj( Vec2(30,30), 15, Color(0.5,1.0,0.5) );
-    // circle = &circleObj;
-    // //cout<<"Created circle:"<<endl<<circle<<endl;
-
+    
     FPSCounter fpsCounter;
 
     initializeRayCasting(screen);
