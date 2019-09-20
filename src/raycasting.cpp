@@ -25,10 +25,11 @@ const float FOV =   60*  PI/180;
 
 /* Can't initialize a circle object here, since it
  uses gl objects before it has been initialized */
-Circle *cursorCircle = nullptr;
-vector<Line> walls; 
-vector<Line> rays;
-vector<Line> boundaries;
+Circle* cursorCircle = nullptr;
+vector<Line*> walls; 
+vector<Line*> rays;
+vector<Line*> projections;
+vector<Line*> boundaries;
 
 float viewDirection;
 
@@ -60,18 +61,21 @@ void initializeRayCasting(Vec2 &screenDimensions){
     for(int i=0; i<NUM_WALLS;i++){
         Vec2 startPos = Vec2(rand()% (int) screen2D.x,rand()% (int) screen2D.y);
         Vec2 endPos = Vec2( (int) (startPos.x + rand()) % (int) screen2D.x, (int) (startPos.y + rand()) % (int) screen2D.y );
-        walls.push_back( Line( startPos, endPos, 5, Color(1,1,1) )  );
+
+        walls.push_back( new Line(startPos, endPos, 5, Color(1,1,1)) );
     }
 
-    boundaries.push_back( Line( Vec2(0,0), Vec2(screen2D.x,0) ) );
-    boundaries.push_back( Line( Vec2(screen2D.x,0), Vec2(screen2D.x,screen2D.y) ) );
-    boundaries.push_back( Line( Vec2(screen2D.x,screen2D.y), Vec2(0,screen2D.y) ) );
-    boundaries.push_back( Line( Vec2(0,screen2D.y), Vec2(0,0) ) );
+    boundaries.push_back( new Line( Vec2(0,0), Vec2(screen2D.x,0) ) );
+    boundaries.push_back( new Line( Vec2(screen2D.x,0), Vec2(screen2D.x,screen2D.y) ) );
+    boundaries.push_back( new Line( Vec2(screen2D.x,screen2D.y), Vec2(0,screen2D.y) ) );
+    boundaries.push_back( new Line( Vec2(0,screen2D.y), Vec2(0,0) ) );
 
-    // Initialize Rays
+    // Initialize Rays and projections
     for(int i=0; i<screen3D.x;i++){
-        rays.push_back( Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
+        rays.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
+        projections.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
     }
+
 }
 
 static float distanceBetweenPoints(const Vec2 &point1, const Vec2 &point2){
@@ -114,7 +118,7 @@ static Vec2 getRayEndPoint(Vec2 pos, float angle){
     float minDistance = -1;
 
     for(int i=0; i<NUM_WALLS; i++){
-        int result = getIntersection(pos, angle, walls[i], intersection);
+        int result = getIntersection(pos, angle, *walls[i], intersection);
         if( result ){
             float distance = distanceBetweenPoints(pos, intersection);
             if( minDistance == -1 || minDistance > distance ){
@@ -125,7 +129,7 @@ static Vec2 getRayEndPoint(Vec2 pos, float angle){
     }
 
     for(int i=0; i<4; i++){
-        int result = getIntersection(pos, angle, boundaries[i], intersection);
+        int result = getIntersection(pos, angle, *boundaries[i], intersection);
         if( result ){
             float distance = distanceBetweenPoints(pos, intersection);
             if( minDistance == -1 || minDistance > distance ){
@@ -217,9 +221,14 @@ void updateRayCasting(){
     }
 
     cursorCircle->moveTo(newPos);
-
-
     cursorCircle->draw();
+
+
+
+    // Draw Walls
+    for( int i=0; i<NUM_WALLS; i++){
+        walls[i]->draw();
+    }
 
     
     // Updating and Drawing rays
@@ -231,35 +240,24 @@ void updateRayCasting(){
 
         float angle = startAngle + angleInc*i;
 
-        rays[i].movePointTo(0, cursorCircle->getPos());
-        rays[i].movePointTo(1, getRayEndPoint( rays[i].getPos(0), angle )  );
-        rays[i].draw();
+        rays[i]->movePointTo(0, cursorCircle->getPos());
+        rays[i]->movePointTo(1, getRayEndPoint( rays[i]->getPos(0), angle )  );
+        rays[i]->draw();
 
-        float distance = distanceBetweenPoints(rays[i].getPos(0), rays[i].getPos(1)) * cos( viewDirection - angle );
+        float distance = distanceBetweenPoints(rays[i]->getPos(0), rays[i]->getPos(1)) * cos( viewDirection - angle );
 
         float x3D = screen2D.x + i;
         float height = (screen2D.y*0.1)/distance * projDist;
         float yAdjust = (screen2D.y-height)/2;
-        float color = 1/(distance*0.01);
+        Color color( 1/(distance*0.01) );
 
-        Line projection( 
-            Vec2( x3D, yAdjust ),
-            Vec2( x3D, screen2D.y - yAdjust),
-            1,
-            Color(color,color,color)
-            );
-
-        projection.draw();
+        projections[i]->movePointTo(0, Vec2( x3D, yAdjust ));
+        projections[i]->movePointTo(1, Vec2( x3D, screen2D.y - yAdjust));
+        projections[i]->setColor(color);
+        projections[i]->draw();
     }
 
-
-
-
-    // Draw Walls
-    for( int i=0; i<NUM_WALLS; i++){
-        walls[i].draw();
-    }
-
+    
 }
 
 

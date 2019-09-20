@@ -22,6 +22,13 @@ Color::Color(){
     a = 1;
 }
 
+Color::Color(float grayScale){
+    r = grayScale;
+    g = grayScale;
+    b = grayScale;
+    a = 1;
+}
+
 std::ostream& operator << (std::ostream& stream, const Color& obj){
     return stream<<"Color("<<obj.r<<","<<obj.g<<","<<obj.b<<","<<obj.a<<")";
 }

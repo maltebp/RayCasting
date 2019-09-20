@@ -16,7 +16,8 @@ class Circle{
     float vertices[24];
     unsigned int indices[6];
     unsigned int ibo;
-    unsigned int buffer;
+    unsigned int vbo;
+    unsigned int vao;
 
     void updateVerticesPos();
     void updateVerticesCol();
@@ -32,6 +33,9 @@ public:
 
     
     Circle(Vec2 cPos, float cRadius, Color cColor);
+
+private:
+    void updateBufferData();
 };
 
 std::ostream& operator << (std::ostream& stream, Circle& obj);

@@ -10,18 +10,14 @@
 FPSCounter::FPSCounter(){
     displayCooldown = DISPLAY_FREQ;
     lastTickTime = 0;
-
     sum = 0; 
     count = 0;
-    
 }
 
 double FPSCounter::tick(){
     double time = glfwGetTime();
     double dTime = time-lastTickTime;
     displayCooldown -= dTime;
-
-    
 
     while( displayCooldown < 0 ){
 

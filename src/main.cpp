@@ -19,6 +19,15 @@ void glfwErrorCallback(int errCode, const char* errStr){
 }
 
 
+static void printGLErrors(){
+    GLenum err;
+    while((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cout<<"GL ERROR!: "<<std::hex<<err<<std::endl;
+    }
+}
+
+
 static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, int mod  ){
     if( action == GLFW_PRESS){
         keyPressed(key);
@@ -27,6 +36,9 @@ static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, i
         keyReleased(key);
     }
 }
+
+
+
 
 
 
@@ -75,6 +87,8 @@ int main(void)
     glfwSetCursorPosCallback(window, cursorPosCallback);
     glfwSetKeyCallback(window, keyCallBack);
 
+    cout<<"Version: "<<glGetString(GL_VERSION)<<endl;
+
     srand(time(NULL));
     
     FPSCounter fpsCounter;
@@ -91,6 +105,7 @@ int main(void)
 
         updateRayCasting();
         fpsCounter.tick();
+        printGLErrors();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

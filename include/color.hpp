@@ -10,6 +10,7 @@ struct Color{
 
     Color(float red, float green, float blue, float alpha);
     Color(float red, float green, float blue);
+    Color(float grayscale);
     Color();
     
 } typedef Color;

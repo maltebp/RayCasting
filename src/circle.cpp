@@ -20,8 +20,7 @@ Circle::Circle(Vec2 cPos, float cRadius, Color cColor){
     pos = cPos;
     radius = cRadius;
     id = nextId++;
-    updateVerticesPos();
-    updateVerticesCol();
+    
     
     
     indices[0] = 0;
@@ -31,12 +30,29 @@ Circle::Circle(Vec2 cPos, float cRadius, Color cColor){
     indices[4] = 3;
     indices[5] = 0;
 
-    
-
     if( !initialized ){
         initialized = true;
         program = createProgram("res/vertexshader.shader", "res/circle_fragShader.glsl");
     } 
+
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+
+    updateVerticesPos();
+    updateVerticesCol();
 }
 
 
@@ -53,6 +69,7 @@ void Circle::updateVerticesPos(){
 
     vertices[18] = pos.x-radius;
     vertices[19] = pos.y-radius;
+    updateBufferData();
 }
 
 void Circle::updateVerticesCol(){
@@ -62,7 +79,13 @@ void Circle::updateVerticesCol(){
         vertices[i+2] = color.b;
         vertices[i+3] = color.a;
     }
+    updateBufferData();
 }
+
+void Circle::updateBufferData(){
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, 4*6*sizeof(float), vertices, GL_DYNAMIC_DRAW);
+};
 
 
 void Circle::moveTo(const Vec2 &newPos){
@@ -86,21 +109,9 @@ void Circle::draw(){
         glUseProgram(program);
     }
 
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*6*sizeof(float), vertices, GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (0*sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    
-    glGenBuffers(1, &ibo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
-
 
     unsigned int loc = glGetUniformLocation(program, "center");
     if( loc != -1){
@@ -108,7 +119,6 @@ void Circle::draw(){
     }else{
         std::cout<<"Couldn't find uniform 'center' variable!"<<std::endl;
     }
-    
     
     loc = glGetUniformLocation(program, "radius");
     if( loc != -1){
@@ -118,10 +128,6 @@ void Circle::draw(){
     }
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-    // Doing this removes massive lag
-    glDeleteBuffers(1, &buffer);
-    glDeleteBuffers(1, &ibo);
 }
 
 
