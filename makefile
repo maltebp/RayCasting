@@ -4,6 +4,7 @@ ODIR = $(WDIR)obj
 BDIR = $(WDIR)bin
 SDIR = $(WDIR)src
 LDLIB += -lglfw3 -lgdi32 -lglew32s -lopengl32
+LDIR = $(WDIRU)lib
 
 
 SRC = $(wildcard $(SDIR)/*.cpp)
@@ -25,11 +26,11 @@ all: $(BDIR)/$(EXE)
 # EXE depends on all OBJ (all .o files)
 # $^ points to all dependencies ($OBJ)
 $(BDIR)/$(EXE): $(OBJ)
-	g++ -Wall $^ -o $@ $(LDLIB)
+	g++ -Wall $^ -o $@ -Llib $(LDLIB)
 
 # $< is the first file in the dependency list (to the right of the :)
 $(ODIR)/%.o: $(SDIR)/%.cpp
-	g++ -c $< -o $@ -Iinclude
+	g++ -c $< -o $@  -Iinclude
 
 clean:
 	$(RM) $(OBJ)
