@@ -75,7 +75,7 @@ void initializeRayCasting(Vec2 &screenDimensions){
 
     // Initialize Rays and projections
     for(int i=0; i<screen3D.x;i++){
-        rays.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
+        rays.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1,0.5) )  );
         projections.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
     }
 
