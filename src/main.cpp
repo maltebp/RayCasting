@@ -6,7 +6,6 @@
 #include <vector>
 #include <fstream>
 #include "fpscounter.hpp"
-#include <time.h>
 #include "vec2.hpp"
 #include "raycasting.hpp"
 
@@ -19,11 +18,12 @@ void glfwErrorCallback(int errCode, const char* errStr){
 }
 
 
+
 static void printGLErrors(){
     GLenum err;
     while((err = glGetError()) != GL_NO_ERROR)
     {
-        std::cout<<"GL ERROR!: "<<std::hex<<err<<std::endl;
+        std::cout<<"GL ERROR: "<<std::hex<<err<<std::endl;
     }
 }
 
@@ -65,7 +65,7 @@ int main(void)
     GLFWwindow* window;
 
     glfwSetErrorCallback(glfwErrorCallback);
-
+    
     /* Create a windowed mode window and its OpenGL context */
     glfwWindowHint(GLFW_SAMPLES, 16);
     window = glfwCreateWindow(1360, 960, "Hello World", NULL, NULL);
@@ -78,10 +78,12 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 
     if(glewInit() != GLEW_OK){
         std::cout<<"Glew not ok"<<std::endl;
+        return -1;
     }
 
     glfwSetCursorPosCallback(window, cursorPosCallback);
@@ -89,7 +91,7 @@ int main(void)
 
     cout<<"Version: "<<glGetString(GL_VERSION)<<endl;
 
-    srand(time(NULL));
+    
     
     FPSCounter fpsCounter;
 
@@ -114,7 +116,6 @@ int main(void)
         glfwPollEvents();
     }
 
-    cout<<"Exitted loop"<<endl;
 
     glfwTerminate();
 

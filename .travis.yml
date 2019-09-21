@@ -7,4 +7,4 @@ compiler: g++
 before_install:
   choco install make
 
-script: make
+script: make clean all

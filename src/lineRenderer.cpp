@@ -80,7 +80,7 @@ void LineRenderer::drawLine(const Line &line){
     try{
         wVertices = &vertices.at(width);
     }catch(std::out_of_range e){
-        std::cout<<"Creating new width vertex: "<<std::setprecision(1)<<width<<std::endl;
+        //std::cout<<"Creating new width vertex: "<<std::setprecision(1)<<width<<std::endl;
         wVertices = new std::vector<float>;
         vertices.insert( std::pair<float,std::vector<float>>( width, *wVertices ) );
         

@@ -7,10 +7,12 @@
 #include<iostream>
 #include<vector>
 #include<math.h>
+#include<time.h>
 
 #include"line.hpp"
 #include"circle.hpp"
 #include"lineRenderer.hpp"
+
 
 using namespace std;
 
@@ -52,7 +54,23 @@ typedef enum {
 bool moveKeysPressed[4] = {false};
 
 
+void generateWalls(){
+    
+
+    Vec2 startPos;  
+    Vec2 endPos;    
+
+    for( Line *wall : walls ){
+        startPos = Vec2(rand()% (int) screen2D.x,rand()% (int) screen2D.y);
+        endPos = Vec2( (int) (startPos.x + rand()) % (int) screen2D.x, (int) (startPos.y + rand()) % (int) screen2D.y );
+        wall->movePointTo(0, startPos);
+        wall->movePointTo(1, endPos);
+    }
+}
+
 void initializeRayCasting(Vec2 &screenDimensions){
+
+    srand(time(0));
 
     screen2D = Vec2( screenDimensions.x/2, screenDimensions.y);
     screen3D = Vec2( screenDimensions.x/2, screenDimensions.y);
@@ -62,11 +80,9 @@ void initializeRayCasting(Vec2 &screenDimensions){
     
     // Initialize Walls
     for(int i=0; i<NUM_WALLS;i++){
-        Vec2 startPos = Vec2(rand()% (int) screen2D.x,rand()% (int) screen2D.y);
-        Vec2 endPos = Vec2( (int) (startPos.x + rand()) % (int) screen2D.x, (int) (startPos.y + rand()) % (int) screen2D.y );
-
-        walls.push_back( new Line(startPos, endPos, 5, Color(1,1,1)) );
+        walls.push_back( new Line( Vec2(0,0), Vec2(0,0), 5, Color(1,1,1)) );
     }
+    generateWalls();
 
     boundaries.push_back( new Line( Vec2(0,0), Vec2(screen2D.x,0) ) );
     boundaries.push_back( new Line( Vec2(screen2D.x,0), Vec2(screen2D.x,screen2D.y) ) );
@@ -75,8 +91,8 @@ void initializeRayCasting(Vec2 &screenDimensions){
 
     // Initialize Rays and projections
     for(int i=0; i<screen3D.x;i++){
-        rays.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1,0.5) )  );
-        projections.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1,1,1) )  );
+        rays.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(0.2) )  );
+        projections.push_back( new Line( Vec2(0,0), Vec2(0,0), 1, Color(1) )  );
     }
 
 }
@@ -160,6 +176,11 @@ void keyPressed(int keyCode){
         case GLFW_KEY_D:
             moveKeysPressed[RIGHT] = true;;
             break;
+        case GLFW_KEY_R:
+            cout<<"Pressed R!"<<endl;
+            generateWalls();
+            break;
+            
     }
 }
 
@@ -210,21 +231,23 @@ void updateRayCasting(){
 
     Vec2 newPos = cursorCircle->getPos();
 
-    if( newPos.x < 0 ){
-        newPos.x = 0;
+    float radius = cursorCircle->getRadius();
+
+    if( newPos.x-radius < 0 ){
+        newPos.x = radius;
     }
-    else if( newPos.x > screen2D.x){
-        newPos.x = screen2D.x;
+    else if( newPos.x+radius > screen2D.x){
+        newPos.x = screen2D.x-radius;
     }
 
-    if( newPos.y < 0 ){
-        newPos.y = 0;
-    }else if(newPos.y > screen2D.y ){
-        newPos.y = screen2D.y;
+    if( newPos.y-radius < 0 ){
+        newPos.y = radius;
+    }else if(newPos.y+radius > screen2D.y ){
+        newPos.y = screen2D.y-radius;
     }
 
     cursorCircle->moveTo(newPos);
-    cursorCircle->draw();
+    
 
 
 
@@ -264,6 +287,7 @@ void updateRayCasting(){
 
 
     lineRenderer->flush();
+    cursorCircle->draw();
 }
 
 void printKeys(){

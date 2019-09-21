@@ -16,7 +16,7 @@ unsigned int compileShader(unsigned int type, const std::string &source){
     int status;
     glGetShaderiv(id, GL_COMPILE_STATUS, &status);
     if( status == GL_TRUE ){
-        std::cout<<"Shader compile successful!"<<std::endl;
+        //std::cout<<"Shader compile successful!"<<std::endl;
     }else{
         int logLength = 0;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
