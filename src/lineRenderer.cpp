@@ -5,6 +5,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include "shaderloader.hpp"
+#include <iomanip> // Remove this!
 
 
 // ==============================================================
@@ -19,19 +20,16 @@ LineRenderer::LineRenderer(){
     // Setup Vertex Array
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-
-    // Telling it should advance each attribute instance     
-    glVertexAttribDivisor(0, 1);
-    glVertexAttribDivisor(1, 1);
-
-    glGenBuffers(1, &vbo);
-
+    
     if( !initialized ){
         initialized = true;
         program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
@@ -48,12 +46,24 @@ void LineRenderer::flush(){
         glUseProgram(program);
     }
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vertices.size(), &vertices[0], GL_DYNAMIC_DRAW );
+    std::vector<float> *wVertices;
 
-    glDrawArrays(GL_LINES, 0, 2);
+
+    for( std::map<float,std::vector<float>>::iterator it = vertices.begin(); it != vertices.end(); it++ ){
+        wVertices = &(it->second);
+
+        if( wVertices->size() > 0 ){
+            glLineWidth(it->first);
+        
+            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float)* wVertices->size(), &(*wVertices)[0], GL_DYNAMIC_DRAW );
+
+            glDrawArrays(GL_LINES, 0, wVertices->size()/6);
+
+            wVertices->clear();
+        }   
+    }  
 }
 
 
@@ -63,19 +73,29 @@ void LineRenderer::drawLine(const Line &line){
     Vec2 pos1 = line.getPos(0);
     Vec2 pos2 = line.getPos(1);
     Color col = line.getColor();
+    float width = line.getWidth();
 
-    vertices.push_back( pos1.x );
-    vertices.push_back( pos1.y );
-    vertices.push_back( col.r );
-    vertices.push_back( col.g );
-    vertices.push_back( col.b );
-    vertices.push_back( col.a );
+    std::vector<float> *wVertices;
+
+    try{
+        wVertices = &vertices.at(width);
+    }catch(std::out_of_range e){
+        std::cout<<"Creating new width vertex: "<<std::setprecision(1)<<width<<std::endl;
+        wVertices = new std::vector<float>;
+        vertices.insert( std::pair<float,std::vector<float>>( width, *wVertices ) );
+        
+    }
     
-    vertices.push_back( pos2.x );
-    vertices.push_back( pos2.y );
-    vertices.push_back( col.r );
-    vertices.push_back( col.g );
-    vertices.push_back( col.b );
-    vertices.push_back( col.a );
-
+    wVertices->push_back( pos1.x );
+    wVertices->push_back( pos1.y );
+    wVertices->push_back( col.r );
+    wVertices->push_back( col.g );
+    wVertices->push_back( col.b );
+    wVertices->push_back( col.a );
+    wVertices->push_back( pos2.x );
+    wVertices->push_back( pos2.y );
+    wVertices->push_back( col.r );
+    wVertices->push_back( col.g );
+    wVertices->push_back( col.b );
+    wVertices->push_back( col.a );
 }

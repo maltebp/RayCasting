@@ -31,7 +31,7 @@ vector<Line*> walls;
 vector<Line*> rays;
 vector<Line*> projections;
 vector<Line*> boundaries;
-LineRenderer lineRenderer;
+LineRenderer* lineRenderer;
 
 float viewDirection;
 
@@ -58,6 +58,7 @@ void initializeRayCasting(Vec2 &screenDimensions){
     screen3D = Vec2( screenDimensions.x/2, screenDimensions.y);
 
     cursorCircle = new Circle( Vec2(0,0), 20, Color(1,1,1));
+    lineRenderer = new LineRenderer();
     
     // Initialize Walls
     for(int i=0; i<NUM_WALLS;i++){
@@ -229,7 +230,7 @@ void updateRayCasting(){
 
     // Draw Walls
     for( int i=0; i<NUM_WALLS; i++){
-        walls[i]->draw();
+        lineRenderer->drawLine(*walls[i]);
     }
 
     
@@ -245,7 +246,7 @@ void updateRayCasting(){
         rays[i]->movePointTo(0, cursorCircle->getPos());
         rays[i]->movePointTo(1, getRayEndPoint( rays[i]->getPos(0), angle )  );
         
-        lineRenderer.drawLine(*rays[i]);
+        lineRenderer->drawLine(*rays[i]);
 
         float distance = distanceBetweenPoints(rays[i]->getPos(0), rays[i]->getPos(1)) * cos( viewDirection - angle );
 
@@ -258,11 +259,11 @@ void updateRayCasting(){
         projections[i]->movePointTo(1, Vec2( x3D, screen2D.y - yAdjust));
         projections[i]->setColor(color);
 
-        lineRenderer.drawLine(*projections[i]);
+        lineRenderer->drawLine(*projections[i]);
     }
 
 
-    lineRenderer.flush();
+    lineRenderer->flush();
 }
 
 void printKeys(){

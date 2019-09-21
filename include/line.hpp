@@ -27,7 +27,7 @@ public:
     Line(Vec2, Vec2);
     ~Line();
 
-    void draw();
+    //void draw();
     Vec2 getPos(unsigned int pointIndex) const;
     unsigned int getId() const;
     float getWidth() const;

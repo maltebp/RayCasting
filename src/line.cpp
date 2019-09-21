@@ -4,10 +4,10 @@
 #include <GL/glew.h>
 #include "shaderloader.hpp"
 
-//unsigned int Line::program = 0;
-unsigned int Line::nextId = 0;
-bool Line::initialized = false;
-unsigned int Line::program = 0; 
+// //unsigned int Line::program = 0;
+// unsigned int Line::nextId = 0;
+// bool Line::initialized = false;
+// unsigned int Line::program = 0; 
 
 
 Line::Line(Vec2 p1, Vec2 p2, float w, Color col){
