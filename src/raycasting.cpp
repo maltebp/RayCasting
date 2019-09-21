@@ -257,7 +257,6 @@ void updateRayCasting(){
         projections[i]->draw();
     }
 
-    
 }
 
 

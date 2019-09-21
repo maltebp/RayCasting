@@ -28,10 +28,10 @@ public:
     ~Line();
 
     void draw();
-    Vec2 getPos(unsigned int pointIndex);
-    unsigned int getId();
-    float getWidth();
-    Color getColor();
+    Vec2 getPos(unsigned int pointIndex) const;
+    unsigned int getId() const;
+    float getWidth() const;
+    Color getColor() const;
     void movePointTo(unsigned int pointIndex, const Vec2 &newPos);
     void setColor(const Color&);
 
