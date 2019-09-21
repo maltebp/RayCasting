@@ -8,6 +8,9 @@ class LineRenderer{
 
 private:
 
+    static unsigned int program;
+    static bool initialized;
+
     std::vector<float> vertices;
 
     unsigned int vao;
@@ -15,6 +18,7 @@ private:
 
 public:
     LineRenderer();
+
     void flush();
     void drawLine(const Line &line);
 };

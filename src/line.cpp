@@ -18,12 +18,12 @@ Line::Line(Vec2 p1, Vec2 p2, float w, Color col){
     width = w;
     color = col;
 
-    if( !initialized ){
-        initialized = true;
-        program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
-    }
+    // if( !initialized ){
+    //     initialized = true;
+    //     program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
+    // }
 
-    setupGl();
+    // setupGl();
 }
 
 Line::Line(Vec2 p1, Vec2 p2){
@@ -33,10 +33,10 @@ Line::Line(Vec2 p1, Vec2 p2){
     width = 0;
     color = Color(1,1,1);
 
-    if( !initialized ){
-        initialized = true;
-        program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
-    }
+    // if( !initialized ){
+    //     initialized = true;
+    //     program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
+    // }
     //setupGl();
 }
 
@@ -44,67 +44,61 @@ Line::Line(Vec2 p1, Vec2 p2){
 
 
 
-void Line::draw(){
+// void Line::draw(){
     
-    int currentProgram;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
-    if(currentProgram != program){
-        glUseProgram(program);
-    }
+//     int currentProgram;
+//     glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+//     if(currentProgram != program){
+//         glUseProgram(program);
+//     }
 
-    glLineWidth(width);
-    glBindVertexArray(vao);
-    glBindBuffer( GL_ARRAY_BUFFER, vbo);
+//     glLineWidth(width);
+//     glBindVertexArray(vao);
+//     glBindBuffer( GL_ARRAY_BUFFER, vbo);
     
-    glDrawArrays(GL_LINES, 0, 2);
-}
+//     glDrawArrays(GL_LINES, 0, 2);
+// }
 
 
-void Line::setupGl(){
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+// void Line::setupGl(){
+//     glGenVertexArrays(1, &vao);
+//     glBindVertexArray(vao);
     
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glGenBuffers(1, &vbo);
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+//     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) 0);
+//     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float)*6, (void*) (2*sizeof(float)));
+//     glEnableVertexAttribArray(0);
+//     glEnableVertexAttribArray(1);
     
-    updateVertices();
-}
+//     updateVertices();
+// }
 
 
-void Line::updateVertices(){
-    vertices[0] = point1.x;
-    vertices[1] = point1.y;
-    vertices[2] = color.r;
-    vertices[3] = color.g;
-    vertices[4] = color.b;
-    vertices[5] = color.a;
-    vertices[6] = point2.x;
-    vertices[7] = point2.y;
-    vertices[8] = color.r;
-    vertices[9] = color.g;
-    vertices[10] = color.b;
-    vertices[11] = color.a;
+// void Line::updateVertices(){
+//     vertices[0] = point1.x;
+//     vertices[1] = point1.y;
+//     vertices[2] = color.r;
+//     vertices[3] = color.g;
+//     vertices[4] = color.b;
+//     vertices[5] = color.a;
+//     vertices[6] = point2.x;
+//     vertices[7] = point2.y;
+//     vertices[8] = color.r;
+//     vertices[9] = color.g;
+//     vertices[10] = color.b;
+//     vertices[11] = color.a;
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*12, vertices, GL_DYNAMIC_DRAW );
-}
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*12, vertices, GL_DYNAMIC_DRAW );
+// }
 
 
-Line::~Line(){
-    //std::cout<<"Line destroyed!"<<std::endl;
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);    
-}
-
-float Line::getWidth(){ return width; }
-Color Line::getColor(){ return color; }
-Vec2 Line::getPos(unsigned int index){ return index ? point2 : point1; }
-unsigned int Line::getId(){return id;}
+float Line::getWidth() const{ return width; }
+Color Line::getColor() const{ return color; }
+Vec2 Line::getPos(unsigned int index) const{ return index ? point2 : point1; }
+unsigned int Line::getId() const{return id;}
 
 void Line::setColor(const Color& col){
     color = col;
@@ -116,7 +110,6 @@ void Line::movePointTo(unsigned int pointIndex, const Vec2 &pos){
     }else{
         point2 = pos;
     }
-    updateVertices();
 }
 
 std::ostream& operator << (std::ostream& stream, Line obj){

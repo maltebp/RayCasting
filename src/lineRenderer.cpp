@@ -4,7 +4,13 @@
 
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include "shaderloader.hpp"
 
+
+// ==============================================================
+
+unsigned int LineRenderer::program = 0;
+bool LineRenderer::initialized = false;
 
 // =============================================================
 
@@ -25,11 +31,23 @@ LineRenderer::LineRenderer(){
     glVertexAttribDivisor(1, 1);
 
     glGenBuffers(1, &vbo);
+
+    if( !initialized ){
+        initialized = true;
+        program = createProgram("res/vertexshader.shader", "res/fragmentshader.shader");
+    }
 }
 
 
 
 void LineRenderer::flush(){
+
+    int currentProgram;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+    if(currentProgram != program){
+        glUseProgram(program);
+    }
+
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     

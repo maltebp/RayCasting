@@ -10,6 +10,7 @@
 
 #include"line.hpp"
 #include"circle.hpp"
+#include"lineRenderer.hpp"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ vector<Line*> walls;
 vector<Line*> rays;
 vector<Line*> projections;
 vector<Line*> boundaries;
+LineRenderer lineRenderer;
 
 float viewDirection;
 
@@ -242,7 +244,8 @@ void updateRayCasting(){
 
         rays[i]->movePointTo(0, cursorCircle->getPos());
         rays[i]->movePointTo(1, getRayEndPoint( rays[i]->getPos(0), angle )  );
-        rays[i]->draw();
+        
+        lineRenderer.drawLine(*rays[i]);
 
         float distance = distanceBetweenPoints(rays[i]->getPos(0), rays[i]->getPos(1)) * cos( viewDirection - angle );
 
@@ -254,12 +257,13 @@ void updateRayCasting(){
         projections[i]->movePointTo(0, Vec2( x3D, yAdjust ));
         projections[i]->movePointTo(1, Vec2( x3D, screen2D.y - yAdjust));
         projections[i]->setColor(color);
-        projections[i]->draw();
+
+        lineRenderer.drawLine(*projections[i]);
     }
 
+
+    lineRenderer.flush();
 }
-
-
 
 void printKeys(){
     cout<<  "Forward: "<<moveKeysPressed[FORWARD]<<
