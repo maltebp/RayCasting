@@ -83,7 +83,6 @@ void LineRenderer::drawLine(const Line &line){
         //std::cout<<"Creating new width vertex: "<<std::setprecision(1)<<width<<std::endl;
         wVertices = new std::vector<float>;
         vertices.insert( std::pair<float,std::vector<float>>( width, *wVertices ) );
-        
     }
     
     wVertices->push_back( pos1.x );

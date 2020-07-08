@@ -13,4 +13,3 @@ You can download and test the working result yourself:
 - [x] Implement raycasting
 - [x] Add FPS counter
 - [x] Batch line drawing
-- [ ] Move raycasting calculations into shaders

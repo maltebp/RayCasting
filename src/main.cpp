@@ -13,11 +13,11 @@ using namespace std;
 
 Vec2 screen(1360,960);
 
+
 void glfwErrorCallback(int errCode, const char* errStr){
     cout<<"GLFW Error: "<<"("<<errCode<<") "<<errStr<<endl;
 }
-
-
+    
 
 static void printGLErrors(){
     GLenum err;
@@ -36,9 +36,6 @@ static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, i
         keyReleased(key);
     }
 }
-
-
-
 
 
 
@@ -93,7 +90,7 @@ int main(void)
 
     
     
-    FPSCounter fpsCounter;
+    FPSCounter fpsCounter;  
 
     initializeRayCasting(screen);
 
